@@ -348,9 +348,8 @@ def check_rep_lag(con, host, port, warning, critical, percent, perf_data, max_la
         try:
             rs_status = con.admin.command("replSetGetStatus")
         except pymongo.errors.OperationFailure, e:
-            if e.code == None and str(e).find('failed: not running with --replSet"'):
-                print "OK - Not running with replSet"
-                return 0
+            print "CRITICAL - %s" % str(e)
+            return 2
 
         serverVersion = tuple(con.server_info()['version'].split('.'))
         if serverVersion >= tuple("2.0.0".split(".")):
