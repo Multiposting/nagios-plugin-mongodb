@@ -269,7 +269,7 @@ def mongo_connect(host=None, port=None, ssl=False, user=None, passwd=None, repli
             if not db.authenticate(user, passwd):
                 sys.exit("Username/Password incorrect")
     except Exception, e:
-        if isinstance(e, pymongo.errors.AutoReconnect) and str(e).find(" is an arbiter") != -1:
+        if isinstance(e, pymongo.errors.AutoReconnect) and " is an arbiter" in str(e):
             # We got a pymongo AutoReconnect exception that tells us we connected to an Arbiter Server
             # This means: Arbiter is reachable and can answer requests/votes - this is all we need to know from an arbiter
             print "OK - State: 7 (Arbiter)"
@@ -672,7 +672,7 @@ def check_replset_state(con, perf_data, warning="", critical=""):
                 data = con.admin.command(son.SON([('replSetGetStatus', 1)]))
             state = int(data['myState'])
         except pymongo.errors.OperationFailure, e:
-            if e.code == None and str(e).find('failed: not running with --replSet"'):
+            if e.code == None and 'failed: not running with --replSet"' in str(e):
                 state = -1
 
         if state == 8:
